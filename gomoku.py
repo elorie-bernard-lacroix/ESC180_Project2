@@ -15,8 +15,8 @@ def is_sq_in_board(board, y, x):
 
 #also from Lab 6: returns True if the sequence is exactly length
 def is_sequence_complete(board, col, y_start, x_start, length, d_y, d_x):
-    if is_sq_in_board(board, y_start, x_start):
-        if board[y_start][x_start] == col:
+    if is_sq_in_board(board, y_start-d_y, x_start-d_x):
+        if board[y_start-d_y][x_start-d_x] == col:
             return False
     if is_sq_in_board(board, y_start + length*d_y, x_start + length*d_x):
         if board[y_start + length*d_y][x_start + length*d_x] == col:
@@ -93,10 +93,10 @@ def search_max(board):
     maxScore, move_y, move_x = -100001, -1, -1 #initialize with impossible values (somewhat for debugging purpose)
     for y in range(len(board)):
         for x in range(len(board[0])):
-            if is_empty(board[y][x]):
+            if board[y][x] == " ":
                 board[y][x] = "b" #temporarily place 'b' counter (assumes computer is black)
                 if score(board) > maxScore:
-                    maxScore = score
+                    maxScore = score(board)
                     move_y = y
                     move_x = x
                 board[y][x] = " "
