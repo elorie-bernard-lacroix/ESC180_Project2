@@ -66,8 +66,27 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
     return open_seq_count, semi_open_seq_count
     
 def detect_rows(board, col, length):
-    ####CHANGE ME
     open_seq_count, semi_open_seq_count = 0, 0
+    for i in range(len(board)):
+        a, b = detect_row(board, col, i, 0, length, 0, 1) #not sure how to best unpack tuples and add
+        open_seq_count += a
+        semi_open_seq_count += b
+        a, b = detect_row(board, col, i, 0, length, 1, 1) #not sure how to best unpack tuples and add
+        open_seq_count += a
+        semi_open_seq_count += b
+        a, b = detect_row(board, col, i, 0, length, 1, -1) #not sure how to best unpack tuples and add
+        open_seq_count += a
+        semi_open_seq_count += b
+        a, b = detect_row(board, col, 0, i, length, 1, 0) #not sure how to best unpack tuples and add
+        open_seq_count += a
+        semi_open_seq_count += b
+    for i in range(1, len(board)):
+        a, b = detect_row(board, col, 0, i, length, 1, 1) #not sure how to best unpack tuples and add
+        open_seq_count += a
+        semi_open_seq_count += b
+        a, b = detect_row(board, col, len(board)-1, i, length, 1, -1) #not sure how to best unpack tuples and add
+        open_seq_count += a
+        semi_open_seq_count += b
     return open_seq_count, semi_open_seq_count
     
 def search_max(board):
