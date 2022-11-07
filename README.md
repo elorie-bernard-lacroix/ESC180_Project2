@@ -1,1 +1,1 @@
-# ESC194_GomokuProject
+# ESC180_Project2
