@@ -1,12 +1,8 @@
-"""Gomoku starter code
-You should complete every incomplete function,
-and add more functions and variables as needed.
+"""
+ESC194_Project 2
+Gomoku
 
-Note that incomplete functions have 'pass' as the first statement:
-pass is a Python keyword; it is a statement that does nothing.
-This is a placeholder that you should remove once you modify the function.
-
-Author(s): Michael Guerzhoy with tests contributed by Siavash Kazemian.  Last modified: Oct. 28, 2022
+Last modified on November 7, 2022 by Elorie Bernard-Lacroix and Chaewon Lim
 """
 
 #from Lab 6: return True iff coordinate y x is actually a square that exists on the board
@@ -32,13 +28,47 @@ def is_sequence_complete(board, col, y_start, x_start, length, d_y, d_x):
 
 
 def is_empty(board):
-    pass
-    
+    ''' This function returns True iff there are no stones on the board "board".'''
+
+    for y in range(len(board)):
+        for x in range(len(board[y])):
+            if board[y][x] != " ":
+                return False
+    return True    
     
 def is_bounded(board, y_end, x_end, length, d_y, d_x):
-    pass
+    '''
+    This function analyses the sequence of length length that ends at location (y end, x end). 
+    The function returns "OPEN" if the sequence is open, "SEMIOPEN" if the sequence if semi-open, 
+    and "CLOSED" if the sequence is closed.
+    
+    Assume that the sequence is complete (i.e., you are not just given a subsequence) and valid, and
+    contains stones of only one colour.
+    '''
+    if board[y_end + d_y][x_end + d_x] == " " and board[y_end - length*d_y][x_end - length*d_x] == " ":
+        return "OPEN"
+    else: # if the sequence is valid, only the opposite colour can bound the sequence
+        if board[y_end + d_y][x_end + d_x] == " " or board[y_end - length*d_y][x_end - length*d_x] == " ":
+            return "SEMIOPEN"
+        else:
+            return "CLOSED"
     
 def detect_row(board, col, y_start, x_start, length, d_y, d_x):
+    '''
+    This function analyses the row (let’s call it R) of squares that starts at the location (y start,x start)
+    and goes in the direction (d y,d x). Note that this use of the word row is different from “a row in
+    a table”. Here the word row means a sequence of squares, which are adjacent either horizontally,
+    or vertically, or diagonally. The function returns a tuple whose first element is the number of open
+    sequences of colour col of length length in the row R, and whose second element is the number of
+    semi-open sequences of colour col of length length in the row R.
+
+    Assume that (y start,x start) is located on the edge of the board. Only complete sequences count.
+    For example, column 1 in Fig. 1 is considered to contain one open row of length 3, and no other
+    rows.
+
+    Assume length is an integer greater or equal to 2.
+    '''
+
     num_of_semi = 0
     num_of_open = 0
     cur_run = 0
@@ -66,6 +96,15 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
     return open_seq_count, semi_open_seq_count
     
 def detect_rows(board, col, length):
+    '''
+    This function analyses the board board. The function returns a tuple, whose first element is the
+    number of open sequences of colour col of length lengthon the entire board, and whose second
+    element is the number of semi-open sequences of colour col of length length on the entire board.
+    Only complete sequences count. For example, Fig. 1 is considered to contain one open row of length
+    3, and no other rows.
+
+    Assume length is an integer greater or equal to 2.
+    '''
     open_seq_count, semi_open_seq_count = 0, 0
     for i in range(len(board)):
         a, b = detect_row(board, col, i, 0, length, 0, 1) #not sure how to best unpack tuples and add
@@ -90,6 +129,14 @@ def detect_rows(board, col, length):
     return open_seq_count, semi_open_seq_count
     
 def search_max(board):
+    '''
+    This function uses the function score() (provided) to find the optimal move for black. It finds the
+    location (y,x), such that (y,x) is empty and putting a black stone on (y,x) maximizes the score of
+    the board as calculated by score(). The function returns a tuple (y, x) such that putting a black
+    stone in coordinates (y, x) maximizes the potential score (if there are several such tuples, you can
+    return any one of them). After the function returns, the contents of board must remain the same.
+    '''
+
     maxScore, move_y, move_x = -100001, -1, -1 #initialize with impossible values (somewhat for debugging purpose)
     for y in range(len(board)):
         for x in range(len(board[0])):
@@ -131,6 +178,11 @@ def score(board):
             open_b[2] + semi_open_b[2] - open_w[2] - semi_open_w[2])
 
 def is_win(board):
+    '''
+    This function determines the current status of the game, and returns one of
+    ["White won", "Black won", "Draw", "Continue playing"], depending on the current status
+    on the board. The only situation where "Draw" is returned is when board is full.
+    '''
     winner = ""
     full = True
     for y in range(len(board)):
@@ -416,9 +468,8 @@ def some_tests():
     #        Open rows of length 5: 0
     #        Semi-open rows of length 5: 0
 
-
-  
             
 if __name__ == '__main__':
+    easy_testset_for_main_functions()
     play_gomoku(8)
     
