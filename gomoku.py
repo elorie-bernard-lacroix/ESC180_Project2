@@ -22,9 +22,12 @@ def is_sequence_complete(board, col, y_start, x_start, length, d_y, d_x):
         if board[y_start + length*d_y][x_start + length*d_x] == col:
             return False
     
-    # for i in range(length):
-    #     if board[y_start]
-    
+    for i in range(length):
+        if not is_sq_in_board(board, y_start+i*d_y, x_start+i*d_x):
+            return False
+        if board[y_start+i*d_y][x_start+i*d_x] != col:
+            return False
+    return True
 
 
 
@@ -36,6 +39,30 @@ def is_bounded(board, y_end, x_end, length, d_y, d_x):
     pass
     
 def detect_row(board, col, y_start, x_start, length, d_y, d_x):
+    num_of_semi = 0
+    num_of_open = 0
+    cur_run = 0
+    open_ends = 2 #either 2, 1, or 0 ends open, meaning open, semiopen, and closed respectively
+    for i in range(len(board)):
+        
+        if not is_sq_in_board(board, y_start+i*d_y, x_start+i*d_x):
+            continue #takes care of out of bounds errors, kinda hacky
+        if board[y_start+i*d_y][x_start+i*d_x] == col:
+            cur_run += 1  
+        elif board[y_start+i*d_y][x_start+i*d_x] == " ":
+            if cur_run == length and open_ends == 2:
+                num_of_open += 1
+            elif cur_run == length and open_ends == 1:
+                num_of_semi += 1
+            open_ends = 2
+            cur_run = 0
+        else: #meaning this is the opposite colour
+            if cur_run == length and open_ends == 2:
+                num_of_semi += 1
+            open_ends = 1
+            cur_run = 0
+    return num_of_open, num_of_semi
+
     return open_seq_count, semi_open_seq_count
     
 def detect_rows(board, col, length):
@@ -84,12 +111,26 @@ def score(board):
             10   * semi_open_b[3]                +  
             open_b[2] + semi_open_b[2] - open_w[2] - semi_open_w[2])
 
-    
 def is_win(board):
     winner = ""
+    full = True
     for y in range(len(board)):
-        for x in range(len(board[0])):
-            if is_sequence_complete()
+        for x in range(len(board[0])): #not using dectect_row() because closed sequences are also wins
+            if is_sequence_complete(board, 'b', y, x, 5, 1, 0) \
+            or is_sequence_complete(board, 'b', y, x, 5, 0, 1) \
+            or is_sequence_complete(board, 'b', y, x, 5, 1, 1) \
+            or is_sequence_complete(board, 'b', y, x, 5, 1, -1):
+                return "Black won"
+            if is_sequence_complete(board, 'w', y, x, 5, 1, 0) \
+            or is_sequence_complete(board, 'w', y, x, 5, 0, 1) \
+            or is_sequence_complete(board, 'w', y, x, 5, 1, 1) \
+            or is_sequence_complete(board, 'w', y, x, 5, 1, -1):
+                return "White won"
+            if board[y][x] == " ":
+                full = False
+    if full:
+        return "Draw"
+    return "Continue playing"            
     pass
 
 
