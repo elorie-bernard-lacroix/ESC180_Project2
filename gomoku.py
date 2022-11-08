@@ -7,7 +7,7 @@ Last modified on November 7, 2022 by Elorie Bernard-Lacroix and Chaewon Lim
 
 #from Lab 6: return True iff coordinate y x is actually a square that exists on the board
 def is_sq_in_board(board, y, x):
-    return y < len(board) and x < len(board[0])
+    return y < len(board) and x < len(board[0]) and y>=0 and x>=0
 
 #also from Lab 6: returns True if the sequence is exactly length
 def is_sequence_complete(board, col, y_start, x_start, length, d_y, d_x):
@@ -45,6 +45,19 @@ def is_bounded(board, y_end, x_end, length, d_y, d_x):
     Assume that the sequence is complete (i.e., you are not just given a subsequence) and valid, and
     contains stones of only one colour.
     '''
+    if not is_sq_in_board(board, y_end + d_y, x_end + d_x) and not is_sq_in_board(board, y_end - length*d_y,x_end - length*d_x):
+        return "CLOSED"
+    if not is_sq_in_board(board, y_end + d_y, x_end + d_x):
+        if board[y_end - length*d_y][x_end - length*d_x] == " ":
+            return "SEMIOPEN"
+        else:
+            return "CLOSED"
+
+    if not is_sq_in_board(board, y_end - length*d_y,x_end - length*d_x):
+        if board[y_end + d_y][x_end + d_x] == " ":
+            return "SEMIOPEN"
+        else:
+            return "CLOSED"
     if board[y_end + d_y][x_end + d_x] == " " and board[y_end - length*d_y][x_end - length*d_x] == " ":
         return "OPEN"
     else: # if the sequence is valid, only the opposite colour can bound the sequence
@@ -72,28 +85,26 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
     num_of_semi = 0
     num_of_open = 0
     cur_run = 0
-    open_ends = 1 #either 2, 1, or 0 ends open, meaning open, semiopen, and closed respectively
-    for i in range(len(board)):
+    #open_ends = 1 #either 2, 1, or 0 ends open, meaning open, semiopen, and closed respectively
+    for i in range(len(board)+1):
         
         if not is_sq_in_board(board, y_start+i*d_y, x_start+i*d_x):
-            if cur_run == length and open_ends == 2:
-                num_of_semi += 1
-            open_ends = 1
+            openType = is_bounded(board, y_start+(i-1)*d_y, x_start+(i-1)*d_x, length, d_y, d_x)
+            if cur_run == length:
+                if openType == "OPEN":
+                    num_of_open += 1
+                if openType == "SEMIOPEN":
+                    num_of_semi += 1
             cur_run = 0
-            continue #takes care of out of bounds errors, kinda hacky
+            break #takes care of out of bounds errors, kinda hacky
         if board[y_start+i*d_y][x_start+i*d_x] == col:
             cur_run += 1  
-        elif board[y_start+i*d_y][x_start+i*d_x] == " ":
-            if cur_run == length and open_ends == 2:
-                num_of_open += 1
-            elif cur_run == length and open_ends == 1:
-                num_of_semi += 1
-            open_ends = 2
-            cur_run = 0
-        else: #meaning this is the opposite colour
-            if cur_run == length and open_ends == 2:
-                num_of_semi += 1
-            open_ends = 1
+        else:
+            if cur_run == length:
+                if is_bounded(board, y_start+(i-1)*d_y, x_start+(i-1)*d_x, length, d_y, d_x) == "OPEN":
+                    num_of_open += 1
+                elif is_bounded(board, y_start+(i-1)*d_y, x_start+(i-1)*d_x, length, d_y, d_x) == "SEMIOPEN":
+                    num_of_semi += 1
             cur_run = 0
     return num_of_open, num_of_semi
 
@@ -111,23 +122,23 @@ def detect_rows(board, col, length):
     '''
     open_seq_count, semi_open_seq_count = 0, 0
     for i in range(len(board)):
-        a, b = detect_row(board, col, i, 0, length, 1, 0) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, i, 0, length, 0, 1) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
         a, b = detect_row(board, col, i, 0, length, 1, 1) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, i, 0, length, 1, -1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, 0, i, length, 1, -1) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, 0, i, length, 0, 1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, 0, i, length, 1, 0) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
     for i in range(1, len(board)):
         a, b = detect_row(board, col, 0, i, length, 1, 1) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, len(board)-1, i, length, 1, -1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, i, len(board)-1, length, 1, -1) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
     return open_seq_count, semi_open_seq_count
