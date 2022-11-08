@@ -42,10 +42,14 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
     num_of_semi = 0
     num_of_open = 0
     cur_run = 0
-    open_ends = 2 #either 2, 1, or 0 ends open, meaning open, semiopen, and closed respectively
+    open_ends = 1 #either 2, 1, or 0 ends open, meaning open, semiopen, and closed respectively
     for i in range(len(board)):
         
         if not is_sq_in_board(board, y_start+i*d_y, x_start+i*d_x):
+            if cur_run == length and open_ends == 2:
+                num_of_semi += 1
+            open_ends = 1
+            cur_run = 0
             continue #takes care of out of bounds errors, kinda hacky
         if board[y_start+i*d_y][x_start+i*d_x] == col:
             cur_run += 1  
@@ -68,7 +72,7 @@ def detect_row(board, col, y_start, x_start, length, d_y, d_x):
 def detect_rows(board, col, length):
     open_seq_count, semi_open_seq_count = 0, 0
     for i in range(len(board)):
-        a, b = detect_row(board, col, i, 0, length, 0, 1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, i, 0, length, 1, 0) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
         a, b = detect_row(board, col, i, 0, length, 1, 1) #not sure how to best unpack tuples and add
@@ -77,7 +81,7 @@ def detect_rows(board, col, length):
         a, b = detect_row(board, col, i, 0, length, 1, -1) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, 0, i, length, 1, 0) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, 0, i, length, 0, 1) #not sure how to best unpack tuples and add
         open_seq_count += a
         semi_open_seq_count += b
     for i in range(1, len(board)):
