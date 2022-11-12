@@ -100,8 +100,7 @@ def detect_rows(board, col, length):
     This function analyses the board board. The function returns a tuple, whose first element is the
     number of open sequences of colour col of length lengthon the entire board, and whose second
     element is the number of semi-open sequences of colour col of length length on the entire board.
-    Only complete sequences count. For example, Fig. 1 is considered to contain one open row of length
-    3, and no other rows.
+    Only complete sequences count.
 
     Assume length is an integer greater or equal to 2.
     '''
