@@ -2,7 +2,7 @@
 ESC194_Project 2
 Gomoku
 
-Last modified on November 7, 2022 by Elorie Bernard-Lacroix and Chaewon Lim
+Last modified on November 8, 2022 by Elorie Bernard-Lacroix and Chaewon Lim
 """
 
 #from Lab 6: return True iff coordinate y x is actually a square that exists on the board
