@@ -121,23 +121,23 @@ def detect_rows(board, col, length):
     '''
     open_seq_count, semi_open_seq_count = 0, 0
     for i in range(len(board)):
-        a, b = detect_row(board, col, i, 0, length, 0, 1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, i, 0, length, 0, 1)
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, i, 0, length, 1, 1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, i, 0, length, 1, 1) 
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, 0, i, length, 1, -1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, 0, i, length, 1, -1) 
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, 0, i, length, 1, 0) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, 0, i, length, 1, 0) 
         open_seq_count += a
         semi_open_seq_count += b
     for i in range(1, len(board)):
-        a, b = detect_row(board, col, 0, i, length, 1, 1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, 0, i, length, 1, 1)
         open_seq_count += a
         semi_open_seq_count += b
-        a, b = detect_row(board, col, i, len(board)-1, length, 1, -1) #not sure how to best unpack tuples and add
+        a, b = detect_row(board, col, i, len(board)-1, length, 1, -1)
         open_seq_count += a
         semi_open_seq_count += b
     return open_seq_count, semi_open_seq_count
